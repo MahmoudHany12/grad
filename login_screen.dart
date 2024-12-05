@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  Future<void> login(BuildContext context) async {
+    try {
+      // Sign in using Firebase Authentication
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Navigate to the home screen on successful login
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      // Handle login errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,10 +40,10 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'History Explorer',
+                'HistoRealm',
                 style: GoogleFonts.cinzel(
                   fontSize: 36,
-                  color: Color(0xffad9c00), // Gold color for text
+                  color: Color(0xffad9c00),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -29,8 +51,9 @@ class LoginScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
-                    hintText: 'Enter your username',
+                    hintText: 'Enter your email',
                     hintStyle: TextStyle(color: Colors.white),
                     filled: true,
                     fillColor: Colors.brown.shade200.withOpacity(0.7),
@@ -44,6 +67,7 @@ class LoginScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextField(
+                  controller: passwordController,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
                     hintStyle: TextStyle(color: Colors.white),
@@ -58,9 +82,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
-                },
+                onPressed: () => login(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
@@ -70,12 +92,12 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 10),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/create-account'); // Navigate to the create account screen
+                  Navigator.pushNamed(context, '/create-account');
                 },
                 child: Text(
                   'Create Account',
                   style: TextStyle(
-                    color: Color(0xffad9c00), // Gold color for "Create Account"
+                    color: Color(0xffad9c00),
                     fontSize: 16,
                   ),
                 ),
